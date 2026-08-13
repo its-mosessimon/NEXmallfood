@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEX Care-Bear Food Directory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky:#bfe9ff;
+    --pink:#ffc3dd;
+    --lavender:#dcc6ff;
+    --mint:#c3f7dc;
+    --sun:#ffe89a;
+    --peach:#ffcfa8;
+    --ink:#5b4a63;
+    --ink-soft:#8a7a92;
+    --white:#fffdfb;
+    --card:#ffffff;
+    --shadow: 0 10px 24px rgba(150, 110, 160, 0.18);
+    --radius: 22px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Nunito', sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 10% 8%, var(--pink) 0%, transparent 40%),
+      radial-gradient(circle at 90% 4%, var(--sun) 0%, transparent 38%),
+      radial-gradient(circle at 85% 90%, var(--mint) 0%, transparent 42%),
+      radial-gradient(circle at 5% 85%, var(--lavender) 0%, transparent 40%),
+      var(--sky);
+    background-attachment:fixed;
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+  h1,h2,h3{font-family:'Baloo 2', cursive; margin:0;}
+
+  /* clouds */
+  .cloud{
+    position:absolute;
+    background:#fff;
+    border-radius:50%;
+    opacity:0.75;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.04));
+  }
+
+  header{
+    position:relative;
+    overflow:hidden;
+    padding:38px 20px 46px;
+    text-align:center;
+    background:linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
+  }
+  .rainbow{
+    width:220px;
+    height:110px;
+    margin:0 auto 14px;
+    border-radius:220px 220px 0 0;
+    background:
+      conic-gradient(from 180deg at 50% 100%,
+        #ff9bc4 0deg 51deg,
+        #ffd08a 51deg 102deg,
+        #fff3a0 102deg 153deg,
+        #b7f0c2 153deg 204deg,
+        #aee3ff 204deg 255deg,
+        #cdb8ff 255deg 306deg,
+        #ff9bc4 306deg 360deg);
+    -webkit-mask: radial-gradient(circle at 50% 100%, transparent 62px, #000 63px);
+            mask: radial-gradient(circle at 50% 100%, transparent 62px, #000 63px);
+  }
+  header h1{
+    font-size:2.4rem;
+    color:#8a5a9e;
+    text-shadow: 0 2px 0 #fff, 0 4px 10px rgba(150,100,170,0.25);
+    letter-spacing:0.5px;
+  }
+  header .tagline{
+    margin-top:8px;
+    font-weight:700;
+    color:var(--ink-soft);
+    font-size:1.02rem;
+  }
+  header .badge-belly{
+    display:inline-block;
+    margin-top:14px;
+    background:var(--white);
+    border-radius:999px;
+    padding:6px 18px;
+    font-weight:800;
+    font-size:0.85rem;
+    color:#a26bb0;
+    box-shadow:var(--shadow);
+  }
+
+  /* controls */
+  .controls{
+    max-width:1000px;
+    margin:0 auto 28px;
+    padding:0 20px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    align-items:center;
+    justify-content:center;
+  }
+  .search-wrap{
+    flex:1 1 340px;
+    position:relative;
+    max-width:480px;
+  }
+  .search-wrap input{
+    width:100%;
+    padding:14px 20px 14px 46px;
+    border-radius:999px;
+    border:3px solid #fff;
+    background:var(--white);
+    box-shadow:var(--shadow);
+    font-family:'Nunito', sans-serif;
+    font-size:1rem;
+    font-weight:700;
+    color:var(--ink);
+    outline:none;
+    transition: border-color .2s, transform .2s;
+  }
+  .search-wrap input::placeholder{color:#c3aecb; font-weight:600;}
+  .search-wrap input:focus{border-color:var(--lavender); transform:translateY(-1px);}
+  .search-wrap .icon{
+    position:absolute;
+    left:18px; top:50%; transform:translateY(-50%);
+    font-size:1.1rem;
+    pointer-events:none;
+  }
+
+  .toggle-pill{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--white);
+    border:3px solid #fff;
+    border-radius:999px;
+    padding:10px 18px;
+    box-shadow:var(--shadow);
+    cursor:pointer;
+    user-select:none;
+    font-weight:800;
+    font-size:0.95rem;
+    color:#4f8a5b;
+  }
+  .toggle-pill input{display:none;}
+  .switch{
+    width:38px; height:22px;
+    background:#e4d9ea;
+    border-radius:999px;
+    position:relative;
+    transition:background .2s;
+    flex-shrink:0;
+  }
+  .switch::after{
+    content:"";
+    position:absolute; top:3px; left:3px;
+    width:16px; height:16px;
+    background:#fff;
+    border-radius:50%;
+    box-shadow:0 1px 3px rgba(0,0,0,0.25);
+    transition:left .2s;
+  }
+  .toggle-pill input:checked + .switch{background:#7bd394;}
+  .toggle-pill input:checked + .switch::after{left:19px;}
+
+  .chip-row{
+    max-width:1000px;
+    margin:0 auto 30px;
+    padding:0 20px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+  }
+  .chip{
+    border:none;
+    padding:8px 16px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.7);
+    font-weight:800;
+    font-size:0.82rem;
+    color:var(--ink);
+    cursor:pointer;
+    box-shadow:0 3px 8px rgba(150,110,160,0.12);
+    transition: transform .15s, background .15s, color .15s;
+  }
+  .chip:hover{transform:translateY(-2px);}
+  .chip.active{
+    background:linear-gradient(135deg,#ffb8d6,#c6b6ff);
+    color:#5a3a6b;
+  }
+
+  main{max-width:1080px; margin:0 auto; padding:0 20px;}
+
+  .cuisine-section{margin-bottom:38px;}
+  .cuisine-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+    padding-left:4px;
+  }
+  .cuisine-header .dot{
+    width:14px; height:14px;
+    border-radius:50%;
+    flex-shrink:0;
+  }
+  .cuisine-header h2{
+    font-size:1.35rem;
+    color:#6d4c7d;
+  }
+  .cuisine-header .count{
+    font-size:0.8rem;
+    font-weight:800;
+    color:var(--ink-soft);
+    background:rgba(255,255,255,0.7);
+    padding:3px 12px;
+    border-radius:999px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+    gap:18px;
+  }
+
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:18px;
+    box-shadow:var(--shadow);
+    border:3px solid #fff;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    transition: transform .18s ease;
+  }
+  .card:hover{transform:translateY(-4px) rotate(-0.3deg);}
+  .card .top-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:8px;
+  }
+  .card h3{
+    font-size:1.08rem;
+    color:#5b3f68;
+    line-height:1.25;
+  }
+  .stall-badge{
+    flex-shrink:0;
+    background:var(--sun);
+    color:#7a5a1f;
+    font-weight:800;
+    font-size:0.72rem;
+    padding:5px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .tag-row{display:flex; flex-wrap:wrap; gap:6px;}
+  .tag{
+    font-size:0.7rem;
+    font-weight:800;
+    padding:4px 10px;
+    border-radius:999px;
+  }
+  .tag.cuisine-tag{background:var(--lavender); color:#5a3f76;}
+  .tag.halal{background:var(--mint); color:#2c6b45;}
+  .card .actions{
+    margin-top:auto;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    flex:1;
+    text-align:center;
+    text-decoration:none;
+    font-family:'Nunito', sans-serif;
+    font-weight:800;
+    font-size:0.78rem;
+    padding:9px 10px;
+    border-radius:14px;
+    border:none;
+    cursor:pointer;
+    transition: transform .15s, filter .15s;
+    white-space:nowrap;
+  }
+  .btn:hover{transform:translateY(-2px); filter:brightness(1.04);}
+  .btn.call{
+    background:linear-gradient(135deg,#ffb0c4,#ff8fae);
+    color:#fff;
+  }
+  .btn.web{
+    background:linear-gradient(135deg,#a7e0ff,#7fc7f2);
+    color:#154c66;
+  }
+  .no-reserve{
+    font-size:0.72rem;
+    font-weight:700;
+    color:var(--ink-soft);
+    padding:9px 4px;
+    text-align:center;
+    flex:1;
+  }
+
+  .empty-state{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--ink-soft);
+    font-weight:700;
+  }
+  .empty-state .big{font-size:2.4rem; display:block; margin-bottom:10px;}
+
+  footer{
+    max-width:1080px;
+    margin:40px auto 0;
+    padding:0 24px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:0.8rem;
+    font-weight:600;
+    line-height:1.6;
+  }
+  footer a{color:#8a5a9e;}
+
+  @media (max-width:520px){
+    header h1{font-size:1.8rem;}
+    .controls{flex-direction:column; align-items:stretch;}
+    .search-wrap{max-width:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="rainbow"></div>
+  <h1>NEX Care-Bear Food Finder 🐻💗</h1>
+  <p class="tagline">Every stall at NEX, Serangoon — sorted with care, one belly-badge at a time</p>
+  <span class="badge-belly">23 Serangoon Central · Daily 10:30am – 10:30pm</span>
+</header>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="icon">🔍</span>
+    <input id="searchInput" type="text" placeholder="Search a stall, dish or cuisine…" />
+  </div>
+  <label class="toggle-pill">
+    <input type="checkbox" id="halalToggle" />
+    <span class="switch"></span>
+    Halal-certified only 🌙
+  </label>
+</div>
+
+<div class="chip-row" id="cuisineChips"></div>
+
+<main id="results"></main>
+
+<footer>
+  Prototype directory — starter dataset of <span id="totalCount"></span> outlets sourced from the official
+  <a href="https://www.nex.com.sg/Directory/Category" target="_blank" rel="noopener">NEX store directory</a> (nex.com.sg), Aug 2026.
+  Stall numbers, reservation lines and hours can change — please confirm with the outlet before visiting.
+  Add more outlets by editing the <code>OUTLETS</code> array in this file.
+</footer>
+
+<script>
+// ---- DATA -----------------------------------------------------------
+// Sourced from nex.com.sg official directory + published mall food guides (Aug 2026).
+// Extend this array to add more outlets — every field is optional except name/stall/cuisine.
+const OUTLETS = [
+  { name: "4Fingers Crispy Chicken", stall: "#B2-50/51", cuisine: "Fast Food & Fried Chicken", halal: true, phone: null, website: "https://4fingers.com.sg" },
+  { name: "Ayam Penyet Ria", stall: "#01-57", cuisine: "Malay / Indonesian", halal: true, phone: "+65 6677 2011", website: null },
+  { name: "Stuff'd", stall: "#B2-47A", cuisine: "Mexican & Turkish Wraps", halal: true, phone: null, website: null },
+  { name: "BatterCatch", stall: "#B1-34/35", cuisine: "Western & Fried Seafood", halal: true, phone: "+65 6470 8208", website: null },
+  { name: "Burger King", stall: "#B1-30/31", cuisine: "Fast Food & Burgers", halal: true, phone: null, website: "https://www.burgerking.com.sg" },
+  { name: "Texas Chicken", stall: "#04-18/19/20", cuisine: "Fast Food & Fried Chicken", halal: true, phone: null, website: "https://www.texaschicken.com.sg" },
+  { name: "Din Tai Fung", stall: "#B1-10/11/12", cuisine: "Chinese (Taiwanese)", halal: false, phone: "+65 6634 7787", website: "https://www.dintaifung.com.sg" },
+  { name: "Dian Xiao Er", stall: "#02-09/10", cuisine: "Chinese", halal: false, phone: "+65 6634 4828", website: "https://www.dianxiaoer.com" },
+  { name: "Canton Paradise", stall: "#02-04/05/06", cuisine: "Chinese (Cantonese)", halal: false, phone: "+65 6805 8179", website: "https://www.paradisegroup.com.sg" },
+  { name: "Beauty In The Pot", stall: "#02-01/02/03", cuisine: "Chinese Hotpot", halal: false, phone: "+65 6805 8172", website: "https://www.paradisegroup.com.sg" },
+  { name: "Eat 3 Bowls", stall: "#B1-13/14", cuisine: "Chinese Noodles", halal: false, phone: null, website: null },
+  { name: "A Hot Hideout", stall: "#B1-76/77", cuisine: "Chinese Hotpot & BBQ", halal: false, phone: null, website: null },
+  { name: "Chin Mee Chin", stall: "#B2-60/61", cuisine: "Peranakan Bakery & Cafe", halal: false, phone: null, website: null },
+  { name: "Fong Sheng Hao", stall: "#B2-15", cuisine: "Taiwanese Breakfast", halal: false, phone: "+65 9757 8550", website: null },
+  { name: "Aburi-EN", stall: "#01-63/64/65", cuisine: "Japanese", halal: false, phone: "+65 6509 0797", website: null },
+  { name: "Charcoal Grill Shinpachi", stall: "#B1-80A", cuisine: "Japanese", halal: false, phone: null, website: null },
+  { name: "Sushi Express", stall: "#B1-38/39/40", cuisine: "Japanese (Sushi)", halal: false, phone: null, website: "https://www.sushiexpress.com.sg" },
+  { name: "Yoshinoya", stall: "#B1-36/37", cuisine: "Japanese Fast Food", halal: false, phone: null, website: "https://www.yoshinoya.com.sg" },
+  { name: "Eat.", stall: "#01-59/60", cuisine: "Cafe & Western", halal: false, phone: null, website: null },
+  { name: "Collin's®", stall: "#B1-27", cuisine: "Western Grill", halal: false, phone: null, website: "https://www.collins.sg" },
+  { name: "Delibowl Express", stall: "#04-15/16", cuisine: "Healthy & Fusion Bowls", halal: false, phone: null, website: null },
+  { name: "Baskin Robbins", stall: "#01-K4/K5", cuisine: "Desserts & Ice Cream", halal: false, phone: "+65 6636 6931", website: "https://www.baskinrobbins.com.sg" },
+  { name: "CHAGEE", stall: "#02-K2/K3/K4", cuisine: "Beverages (Tea)", halal: false, phone: "+65 8093 1761", website: null },
+  { name: "Allgood Gourmet", stall: "#B2-49", cuisine: "Fast Food & Grill", halal: true, phone: null, website: null },
+];
+
+// ---- CUISINE COLOURS (Care Bears palette) ----------------------------
+const CUISINE_COLORS = ["#ff9bc4","#ffd08a","#fff3a0","#b7f0c2","#aee3ff","#cdb8ff","#ffb4a2","#c4f1e0"];
+function cuisineList(){
+  return [...new Set(OUTLETS.map(o => o.cuisine))].sort();
+}
+const cuisineColorMap = {};
+cuisineList().forEach((c,i) => cuisineColorMap[c] = CUISINE_COLORS[i % CUISINE_COLORS.length]);
+
+// ---- STATE -------------------------------------------------------------
+let activeCuisine = null;
+
+// ---- RENDER CHIPS --------------------------------------------------
+const chipRow = document.getElementById("cuisineChips");
+function renderChips(){
+  chipRow.innerHTML = "";
+  const allChip = document.createElement("button");
+  allChip.className = "chip" + (activeCuisine === null ? " active" : "");
+  allChip.textContent = "All cuisines";
+  allChip.onclick = () => { activeCuisine = null; renderChips(); render(); };
+  chipRow.appendChild(allChip);
+
+  cuisineList().forEach(c => {
+    const chip = document.createElement("button");
+    chip.className = "chip" + (activeCuisine === c ? " active" : "");
+    chip.textContent = c;
+    chip.onclick = () => { activeCuisine = (activeCuisine === c ? null : c); renderChips(); render(); };
+    chipRow.appendChild(chip);
+  });
+}
+
+// ---- RENDER RESULTS --------------------------------------------------
+const resultsEl = document.getElementById("results");
+const searchInput = document.getElementById("searchInput");
+const halalToggle = document.getElementById("halalToggle");
+document.getElementById("totalCount").textContent = OUTLETS.length;
+
+function render(){
+  const q = searchInput.value.trim().toLowerCase();
+  const halalOnly = halalToggle.checked;
+
+  let filtered = OUTLETS.filter(o => {
+    if (halalOnly && !o.halal) return false;
+    if (activeCuisine && o.cuisine !== activeCuisine) return false;
+    if (q && !(o.name.toLowerCase().includes(q) || o.cuisine.toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  resultsEl.innerHTML = "";
+
+  if (filtered.length === 0){
+    resultsEl.innerHTML = `<div class="empty-state"><span class="big">🌈🐻</span>No stalls match yet — try another search or clear a filter!</div>`;
+    return;
+  }
+
+  const groups = {};
+  filtered.forEach(o => { (groups[o.cuisine] ??= []).push(o); });
+
+  Object.keys(groups).sort().forEach(cuisine => {
+    const section = document.createElement("section");
+    section.className = "cuisine-section";
+
+    const header = document.createElement("div");
+    header.className = "cuisine-header";
+    header.innerHTML = `
+      <span class="dot" style="background:${cuisineColorMap[cuisine]}"></span>
+      <h2>${cuisine}</h2>
+      <span class="count">${groups[cuisine].length} stall${groups[cuisine].length > 1 ? "s" : ""}</span>
+    `;
+    section.appendChild(header);
+
+    const grid = document.createElement("div");
+    grid.className = "grid";
+
+    groups[cuisine].forEach(o => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const callBtn = o.phone
+        ? `<a class="btn call" href="tel:${o.phone.replace(/\s+/g,'')}">📞 Call to Reserve</a>`
+        : `<span class="no-reserve">Walk-in only</span>`;
+
+      const webBtn = o.website
+        ? `<a class="btn web" href="${o.website}" target="_blank" rel="noopener">🍽️ Menu / Website</a>`
+        : "";
+
+      card.innerHTML = `
+        <div class="top-row">
+          <h3>${o.name}</h3>
+          <span class="stall-badge">${o.stall}</span>
+        </div>
+        <div class="tag-row">
+          <span class="tag cuisine-tag">${o.cuisine}</span>
+          ${o.halal ? `<span class="tag halal">🌙 Halal</span>` : ""}
+        </div>
+        <div class="actions">
+          ${callBtn}
+          ${webBtn}
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    resultsEl.appendChild(section);
+  });
+}
+
+searchInput.addEventListener("input", render);
+halalToggle.addEventListener("change", render);
+
+renderChips();
+render();
+</script>
+
+</body>
+</html>
