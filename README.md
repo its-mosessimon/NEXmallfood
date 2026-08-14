@@ -1,3 +1,4 @@
+[README.md](https://github.com/user-attachments/files/31050642/README.md)
 # NEX Care-Bear Food Directory
 
 A single-page, Care Bears–themed food directory for NEX mall (Serangoon). Search, halal filter,
@@ -47,14 +48,42 @@ All outlet data lives in the `OUTLETS` array near the bottom of `index.html`, in
 `<script>` tag. Each entry looks like:
 
 ```js
-{ name: "Din Tai Fung", stall: "#B1-10/11/12", cuisine: "Chinese (Taiwanese)",
-  halal: false, phone: "+65 6634 7787", website: "https://www.dintaifung.com.sg" }
+{ name: "Din Tai Fung", stall: "#B1-10/11/12", cuisine: "Chinese",
+  detail: "Taiwanese dumplings & noodles", halal: false,
+  phone: "+65 6634 7787", website: "https://www.dintaifung.com.sg" }
 ```
 
 - `phone: null` → card shows "Walk-in only" instead of a call button
 - `website: null` → menu/website button is hidden
+- `grab: false` → hides the "Order on Grab" button (used for Starbucks/Coffee Bean, which run
+  their own delivery apps in Singapore instead of partnering with Grab)
 - Cuisine colors and chips are generated automatically from whatever values appear in `cuisine`
 
-Current dataset (24 outlets) is a starter set sourced from the official NEX directory
+Current dataset (28 outlets) is a starter set sourced from the official NEX directory
 (nex.com.sg) as of Aug 2026 — stall numbers and hours can change, so verify before publishing
 live.
+
+## Live Google star ratings (optional)
+
+Each card can show a real, current Google rating (`★★★★☆ 4.3 (612)`) instead of a "tap to
+check" link — but this needs your own Google Places API key, since there's no reliable way to
+bake accurate ratings into the file (they change constantly, and third-party sites often show
+Tripadvisor/Yelp numbers mislabeled as Google's).
+
+**Setup:**
+1. Go to [console.cloud.google.com/google/maps-apis](https://console.cloud.google.com/google/maps-apis)
+   and create/select a project.
+2. Enable **Places API (New)**.
+3. Create an API key, then restrict it (Application restrictions → **Websites**) to your
+   deployed domain, e.g. `nex-food-directory.vercel.app/*` — this stops anyone else from using
+   your key if they inspect the page source.
+4. Open `index.html`, find this line near the top of the `<script>` block, and paste your key:
+   ```js
+   const GOOGLE_PLACES_API_KEY = ""; // <-- paste your key here
+   ```
+5. Redeploy (`git push`). Ratings now hydrate live on every card and on the spin-wheel result.
+
+**Cost:** Places API (New) Text Search is roughly $32 per 1,000 requests, with a recurring
+$200/month free credit from Google — for personal/light use this stays well within the free
+tier, but keep an eye on it if you share the link widely. Leave the key blank to skip all of
+this and keep the plain "tap to check" links.
